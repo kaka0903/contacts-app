@@ -1,0 +1,22 @@
+# 运行时数据（每次跑程序都会变）
+contacts.json
+*.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# 参考答案（不公开）
+参考答案/
+
+# IDE
+.idea/
+.vscode/
+
+# 系统
+.DS_Store
+Thumbs.db
+desktop.ini
