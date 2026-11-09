@@ -69,8 +69,12 @@ def find_by_name(contacts, keyword):
 
 
 def _disp_width(text):
-    """计算字符串在终端中占的显示列数（中文/全角字符占 2 列）。"""
-    return sum(2 if unicodedata.east_asian_width(ch) in ("W", "F") else 1
+    """计算字符串在终端中占的显示列数。
+
+    W/F（宽/全角，如汉字）占 2 列；A（歧义宽度，如中文环境下的省略号「…」、
+    乘号「×」）在中文字体下同样按 2 列渲染；其余按 1 列。
+    """
+    return sum(2 if unicodedata.east_asian_width(ch) in ("W", "F", "A") else 1
                for ch in text)
 
 

@@ -9,6 +9,12 @@ __pycache__/
 venv/
 *.egg-info/
 
+# 测试产物
+.pytest_cache/
+.pytest_tmp/
+.coverage
+htmlcov/
+
 # 参考答案（不公开）
 参考答案/
 
