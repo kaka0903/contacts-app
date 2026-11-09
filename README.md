@@ -1,8 +1,10 @@
 # 通讯录管理系统（Command-Line Contacts Manager）
 
+![Tests](https://github.com/kaka0903/contacts-app/actions/workflows/test.yml/badge.svg)
+
 一个用 Python 实现的命令行通讯录，支持增删改查、模糊搜索、数据持久化。
 
-这是我学习 Python 的第 7 天完成的第一个完整项目。
+这是我学习 Python 的第 7 天完成的第一个完整项目，随后补齐了测试用例、缺陷报告与 pytest 自动化测试。
 
 ---
 
@@ -34,8 +36,34 @@
 ## 技术栈
 
 - **Python 3.12+**
-- 标准库 `json`（数据序列化）
-- 无第三方依赖
+- 标准库 `json`（数据序列化）、`unicodedata`（终端显示宽度计算）
+- 无运行时第三方依赖
+- 测试：`pytest`
+
+---
+
+## 测试
+
+本项目有一套完整的测试资产：
+
+| 类型 | 内容 | 位置 |
+|---|---|---|
+| 测试用例 | 30 条，含设计依据与执行结果 | `测试用例表.xlsx` |
+| 缺陷报告 | 2 个缺陷，含复现步骤、根因、修复建议 | `缺陷报告.md` |
+| 自动化测试 | 22 个 pytest 用例，覆盖核心逻辑/显示/存储 | `tests/` |
+
+```bash
+pip install -r requirements-dev.txt
+pytest -v
+```
+
+测试通过 GitHub Actions 在每次 push 时自动执行（Python 3.12 / 3.13 双版本）。
+
+**覆盖范围**
+
+- `test_core.py` — 搜索逻辑：精确/模糊/多结果/无匹配，空关键字行为，纯函数无副作用
+- `test_display.py` — 中文与全角字符的显示宽度计算、补齐与截断（BUG-001 回归）
+- `test_storage.py` — 文件读写往返、文件缺失、文件损坏、中文不转义、空数组落盘（BUG-002 相关）
 
 ---
 
@@ -52,18 +80,30 @@ python contacts_app.py
 ## 项目结构
 
 ```
-contacts_app.py      主程序
-├── load_contacts()      读取数据（含损坏文件容错）
-├── save_contacts()      写入数据
-├── input_str()          非空字符串输入
-├── input_phone()        手机号格式校验
-├── find_by_name()       模糊匹配
-├── show_all()           表格展示
-├── add_contact()        添加
-├── search_contact()     搜索
-├── update_contact()     修改
-├── delete_contact()     删除
-└── main()               菜单主循环
+contacts_app.py            主程序
+├── _disp_width()            计算终端显示宽度（中文占 2 列）
+├── _fit()                   按显示宽度补齐/截断
+├── load_contacts()          读取数据（含损坏文件容错）
+├── save_contacts()          写入数据
+├── input_str()              非空字符串输入
+├── input_phone()            手机号格式校验
+├── find_by_name()           模糊匹配
+├── show_all()               表格展示
+├── add_contact()            添加
+├── search_contact()         搜索
+├── update_contact()         修改
+├── delete_contact()         删除
+└── main()                   菜单主循环
+
+tests/
+├── test_core.py             搜索逻辑单元测试
+├── test_display.py          显示宽度与截断（BUG-001 回归）
+└── test_storage.py          文件读写与容错
+
+conftest.py                  把项目根目录加入 sys.path
+pytest.ini                   pytest 配置
+requirements-dev.txt         开发依赖（仅 pytest）
+.github/workflows/test.yml   GitHub Actions 持续集成
 ```
 
 **分层设计**：数据层（读写文件）／输入层（校验输入）／业务层（增删改查）／界面层（菜单）四层分离，
@@ -87,8 +127,9 @@ contacts_app.py      主程序
 
 ## 后续计划
 
+- [x] 为功能补充自动化测试（pytest，22 个用例）
+- [x] 接入 GitHub Actions 持续集成
 - [ ] 按城市分组统计
 - [ ] 导出为 CSV
 - [ ] 手机号脱敏显示
 - [ ] 添加创建时间戳
-- [ ] 为上述功能补充自动化测试（pytest）
